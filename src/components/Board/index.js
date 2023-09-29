@@ -1,12 +1,33 @@
+import { MENU_ITEMS } from "@/constants";
 import { useRef, useEffect, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { menuItemClick, actionItemClick } from "@/slice/menuSlice";
 
 const Board = () => {
-  const activeMenuItem = useSelector((state) => state.menu.activeMenuItem);
+  const dispatch = useDispatch();
+  const { activeMenuItem, actionMenuItem } = useSelector((state) => state.menu);
   const canvasRef = useRef(null);
   const shouldDraw = useRef(false);
 
   const { color, size } = useSelector((state) => state.toolbox[activeMenuItem]);
+  // console.log("mai size" + size);
+
+  useEffect(() => {
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+
+    if (actionMenuItem === MENU_ITEMS.DOWNLOAD) {
+      const URL = canvas.toDataURL();
+      const anchor = document.createElement("a");
+      anchor.href = URL;
+      anchor.download = "board-screen.jpg";
+      anchor.click();
+      console.log(URL);
+    }
+    dispatch(actionItemClick(null));
+  }, [actionMenuItem, dispatch]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -15,6 +36,7 @@ const Board = () => {
     const context = canvas.getContext("2d");
 
     const changeConfig = () => {
+      console.log("checking size" + size);
       context.strokeStyle = color;
       context.lineWidth = size;
     };
