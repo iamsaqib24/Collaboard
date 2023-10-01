@@ -1,3 +1,8 @@
 import { io } from "socket.io-client";
 
-export const socket = io("http://localhost:8000/");
+const URL =
+  process.env.NODE_ENV === "production"
+    ? "https://collaboard-server.onrender.com"
+    : "http://localhost:8000/";
+
+export const socket = io(URL);
